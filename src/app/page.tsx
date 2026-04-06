@@ -6,7 +6,7 @@ export default function Home() {
       <main className="flex w-full max-w-lg flex-col gap-8 rounded-2xl border border-zinc-200 bg-white p-10 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div>
           <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-            Vercel 向けテンプレート
+            Vercel 検証用ページ
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             React + Next.js + Supabase
