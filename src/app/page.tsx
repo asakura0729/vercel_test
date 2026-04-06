@@ -40,6 +40,31 @@ export default function Home() {
             </span>
           </li>
         </ul>
+        <div className="rounded-2xl border border-dashed border-zinc-200 p-4 dark:border-zinc-800">
+          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-100">
+            追加したサンプルページ
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <Link
+              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              href="/about"
+            >
+              /about
+            </Link>
+            <Link
+              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              href="/blog"
+            >
+              /blog
+            </Link>
+            <Link
+              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              href="/list"
+            >
+              /list
+            </Link>
+          </div>
+        </div>
         <p className="text-xs text-zinc-500 dark:text-zinc-500">
           ローカル: <code className="rounded bg-zinc-100 px-1 py-0.5 dark:bg-zinc-800">cp .env.example .env.local</code>{" "}
           を編集。本番は Vercel プロジェクトに Supabase を接続すると同名の変数が入ります。
