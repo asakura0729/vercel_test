@@ -9,13 +9,8 @@ export default function Home() {
             Vercel 検証用ページ
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            React + Next.js + Supabase
+            React + Next.js
           </h1>
-          <p className="mt-3 text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
-            フロントは React（Next.js App Router）。バックエンドは Vercel が第一級で扱う
-            TypeScript / Node（Route Handlers・Server Actions）です。データベースは Vercel
-            Storage の Supabase 連携用にクライアントを用意済みです。
-          </p>
         </div>
         <ul className="flex flex-col gap-2 text-sm text-zinc-700 dark:text-zinc-300">
           <li>
@@ -59,9 +54,15 @@ export default function Home() {
             </Link>
             <Link
               className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-              href="/list"
+              href="/supabase"
             >
-              /list
+              /supabase
+            </Link>
+            <Link
+              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              href="/neon"
+            >
+              /neon
             </Link>
           </div>
         </div>

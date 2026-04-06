@@ -20,7 +20,7 @@ function escapeIlikeForOrFilter(raw: string): string {
     .replace(/_/g, "\\_");
 }
 
-export default async function ListPage(props: PageProps<"/list">) {
+export default async function ListPage(props: PageProps<"/supabase">) {
   const searchParams = await props.searchParams;
   const keyword = parseKeyword(searchParams);
 
@@ -62,7 +62,7 @@ export default async function ListPage(props: PageProps<"/list">) {
 
         <form
           method="get"
-          action="/list"
+          action="/supabase"
           className="flex flex-col gap-3 sm:flex-row sm:items-end"
         >
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -88,7 +88,7 @@ export default async function ListPage(props: PageProps<"/list">) {
             </button>
             {keyword ? (
               <Link
-                href="/list"
+                href="/supabase"
                 className="rounded-full border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50"
               >
                 クリア
