@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 
 /** Supabase Table Editor のテーブル名（public スキーマ）に合わせる */
 const DATA_TABLE = "test";
@@ -34,7 +35,10 @@ export default async function ListPage(props: PageProps<"/supabase">) {
     message =
       "Supabase の接続情報が未設定です。プロジェクト直下の .env.local に NEXT_PUBLIC_SUPABASE_URL と NEXT_PUBLIC_SUPABASE_ANON_KEY を記入してください（Supabase Dashboard → Project Settings → API）。保存したら開発サーバーを再起動してください。本番では Vercel の Storage で Supabase を Connect すると同名の変数が入ります。";
   } else {
-    const supabase = await createClient();
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+    const supabase = serviceKey
+      ? createServiceRoleClient()
+      : await createClient();
 
     let query = supabase.from(DATA_TABLE).select("*");
     if (keyword) {
@@ -114,7 +118,14 @@ export default async function ListPage(props: PageProps<"/supabase">) {
                   <strong className="font-medium text-zinc-800"> Row Level Security（RLS）で anon が読めない</strong>
                   ことが多いです（Table Editor は別ロールで見えます）。
                 </p>
-                <p>Supabase の SQL Editor で次を実行し、anon の SELECT を許可してからページを再読み込みしてください。</p>
+                <p>
+                  対処のどちらか一方でよいです。(1) Vercel の Environment Variables に Supabase の
+                  <code className="mx-1 rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[0.8rem]">
+                    SUPABASE_SERVICE_ROLE_KEY
+                  </code>
+                  （Dashboard → API の service_role・サーバー専用）を登録して再デプロイする。(2) Supabase の SQL
+                  Editor で次を実行し、anon の SELECT を許可する。
+                </p>
                 <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-xs text-zinc-800">
 {`alter table public.${DATA_TABLE} enable row level security;
 
