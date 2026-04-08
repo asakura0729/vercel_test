@@ -5,6 +5,22 @@ import { createServiceRoleClient } from "@/lib/supabase/service";
 /** Supabase Table Editor のテーブル名（public スキーマ）に合わせる */
 const DATA_TABLE = "test";
 
+type TestRow = Record<string, unknown> & {
+  id?: number;
+  title?: string | null;
+  text?: string | null;
+};
+
+function rowNumericId(row: TestRow): number | null {
+  const raw = row.id ?? row["report-id"];
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  if (typeof raw === "string") {
+    const n = Number.parseInt(raw, 10);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
 function parseKeyword(searchParams: Record<string, string | string[] | undefined>) {
   const q = searchParams.q;
   if (typeof q === "string") return q.trim();
@@ -28,7 +44,7 @@ export default async function ListPage(props: PageProps<"/supabase">) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
-  let rows: Record<string, unknown>[] | null = null;
+  let rows: TestRow[] | null = null;
   let message: string | null = null;
 
   if (!url || !anon) {
@@ -50,7 +66,7 @@ export default async function ListPage(props: PageProps<"/supabase">) {
     if (error) {
       message = `${error.message}（テーブル「${DATA_TABLE}」の参照を確認してください。RLS で anon が拒否されていないかも確認）`;
     } else {
-      rows = (data ?? []) as Record<string, unknown>[];
+      rows = (data ?? []) as TestRow[];
     }
   }
 
@@ -127,7 +143,7 @@ export default async function ListPage(props: PageProps<"/supabase">) {
                   Editor で次を実行し、anon の SELECT を許可する。
                 </p>
                 <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-xs text-zinc-800">
-{`alter table public.${DATA_TABLE} enable row level security;
+                  {`alter table public.${DATA_TABLE} enable row level security;
 
 create policy "anon_select_${DATA_TABLE}"
 on public.${DATA_TABLE}
@@ -141,35 +157,66 @@ using (true);`}
               </div>
             )
           ) : (
-            rows?.map((row, i) => (
-              <div
-                key={String(row.id ?? `row-${i}`)}
-                className="border-b border-zinc-200 pb-4 last:border-b-0"
-              >
-                <dl className="grid gap-1 text-sm">
-                  {Object.entries(row).map(([key, val]) => (
-                    <div key={key} className="grid gap-0.5 sm:grid-cols-[minmax(0,8rem)_1fr]">
-                      <dt className="font-medium text-zinc-500">{key}</dt>
-                      <dd className="break-all text-zinc-900">
-                        {val === null
-                          ? "null"
-                          : typeof val === "object"
-                            ? JSON.stringify(val)
-                            : String(val)}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            ))
+            rows?.map((row, i) => {
+              const rid = rowNumericId(row);
+              const textVal =
+                typeof row.text === "string" ? row.text : "";
+              const snippet =
+                textVal.length > 160
+                  ? `${textVal.slice(0, 160)}…`
+                  : textVal;
+              const titleStr =
+                typeof row.title === "string" ? row.title : "";
+              const titleText =
+                titleStr.trim() ||
+                (rid != null
+                  ? `（無題 · id ${rid}）`
+                  : `（無題 · 行 ${i + 1}）`);
+              const key = rid != null ? String(rid) : `row-${i}`;
+              return (
+                <article
+                  key={key}
+                  className="border-b border-zinc-200 pb-5 last:border-b-0"
+                >
+                  <h2 className="text-base font-semibold leading-snug text-zinc-900">
+                    {rid != null ? (
+                      <Link
+                        href={`/supabase/post/${rid}`}
+                        className="rounded-sm text-amber-800 underline decoration-amber-300/80 underline-offset-2 transition hover:bg-amber-100/80 hover:decoration-amber-600"
+                      >
+                        {titleText}
+                      </Link>
+                    ) : (
+                      <span className="text-zinc-500">{titleText}</span>
+                    )}
+                  </h2>
+                  {rid != null ? (
+                    <p className="mt-1.5 text-xs text-zinc-500">id: {rid}</p>
+                  ) : null}
+                  {snippet ? (
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                      {snippet}
+                    </p>
+                  ) : null}
+                </article>
+              );
+            })
           )}
         </div>
-        <Link
-          href="/"
-          className="w-fit rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
-        >
-          トップへ戻る
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/supabase/post"
+            className="w-fit rounded-full border border-amber-200 bg-amber-50/80 px-4 py-2 text-sm font-medium text-amber-950 transition hover:bg-amber-100"
+          >
+            新規作成（/supabase/post）
+          </Link>
+          <Link
+            href="/"
+            className="w-fit rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
+          >
+            トップへ戻る
+          </Link>
+        </div>
       </div>
     </main>
   );
