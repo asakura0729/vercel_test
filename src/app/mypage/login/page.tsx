@@ -21,8 +21,13 @@ export default async function MyPageLogin() {
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">ログイン</h1>
           <p className="text-sm text-zinc-600">
-            Supabase Authentication（メールアドレス・パスワード）でサインインします。
+            Supabase Authentication（メールアドレス・パスワード）でサインインします。<br />
           </p>
+          <div className="border p-2 mt-[1rem]">
+            <p className="text-sm text-zinc-600">
+              メールアドレス：y-asakura@lab-unlimited.com<br />パスワード：testtest
+            </p>
+          </div>
         </div>
         <div className="flex flex-col gap-6">
           <LoginForm />

@@ -42,27 +42,27 @@ export default function Home() {
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
             <Link
               className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              href="/mypage/login"
+            >
+              マイページログイン機能
+            </Link>
+            <Link
+              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
               href="/about"
             >
-              /about
+              静的ページテスト
             </Link>
             <Link
               className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
               href="/blog"
             >
-              /blog
+              BLOG機能テスト
             </Link>
             <Link
               className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
               href="/supabase"
             >
-              /supabase
-            </Link>
-            <Link
-              className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-              href="/neon"
-            >
-              /neon
+              SUPABASEテスト
             </Link>
           </div>
         </div>
