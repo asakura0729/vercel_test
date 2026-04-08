@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+    "auth0": {
+      "command": "/home/y-asakura/.local/bin/auth0-mcp-cursor.sh",
+      "args": [
+        "run",
+        "--tools",
+        "*"
+      ]
+    },
     "supabase": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp?project_ref=xfpkruiuhgsaxdlbagvk"

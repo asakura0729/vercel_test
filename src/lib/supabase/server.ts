@@ -17,13 +17,13 @@ export async function createClient() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, _headers) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options),
           );
         } catch {
-          /* Server Component からの呼び出し時は無視（将来 Middleware でセッション更新する場合に使用） */
+          /* Server Component からの呼び出し時は Cookie を書けない。Middleware でセッション更新済みであることを前提にする */
         }
       },
     },
