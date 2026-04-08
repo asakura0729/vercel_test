@@ -56,7 +56,10 @@ export default async function ListPage(props: PageProps<"/supabase">) {
       ? createServiceRoleClient()
       : await createClient();
 
-    let query = supabase.from(DATA_TABLE).select("*");
+    let query = supabase
+      .from(DATA_TABLE)
+      .select("*")
+      .order("id", { ascending: false });
     if (keyword) {
       const pattern = `%${escapeIlikeForOrFilter(keyword)}%`;
       query = query.or(`title.ilike.${pattern},text.ilike.${pattern}`);
@@ -208,7 +211,7 @@ using (true);`}
             href="/supabase/post"
             className="w-fit rounded-full border border-amber-200 bg-amber-50/80 px-4 py-2 text-sm font-medium text-amber-950 transition hover:bg-amber-100"
           >
-            新規作成（/supabase/post）
+            新規作成
           </Link>
           <Link
             href="/"
