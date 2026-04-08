@@ -21,7 +21,7 @@ export default async function MyPageLogin() {
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">ログイン</h1>
           <p className="text-sm text-zinc-600">
-            Supabase Authentication（メールアドレス・パスワード）でサインインします。<br />
+            Supabase Authenticationを使ったログイン認証の検証です<br />
           </p>
           <div className="border p-2 mt-[1rem]">
             <p className="text-sm text-zinc-600">
