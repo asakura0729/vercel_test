@@ -4,7 +4,9 @@ import {
   getBlogList,
   isMicrocmsConfigured,
   pickBlogHtml,
+  pickBlogThumbnailUrl,
 } from "@/lib/microcms";
+import Image from "next/image";
 import Link from "next/link";
 
 export const revalidate = 60;
@@ -67,7 +69,19 @@ MICROCMS_API_KEY=あなたのAPIキー
                   <code className="rounded-md bg-white/80 px-1 py-0.5 ring-1 ring-amber-200/80">
                     body
                   </code>{" "}
-                  である想定。異なる場合はコードを合わせて変更してください。
+                  である想定。一覧のサムネイルは microCMS に画像フィールド（{" "}
+                  <code className="rounded-md bg-white/80 px-1 py-0.5 ring-1 ring-amber-200/80">
+                    eyecatch
+                  </code>{" "}
+                  /{" "}
+                  <code className="rounded-md bg-white/80 px-1 py-0.5 ring-1 ring-amber-200/80">
+                    thumbnail
+                  </code>{" "}
+                  など）を追加すると表示されます。フィールド ID が異なる場合は{" "}
+                  <code className="rounded-md bg-white/80 px-1 py-0.5 ring-1 ring-amber-200/80">
+                    microcms.ts
+                  </code>{" "}
+                  を合わせてください。
                 </li>
               </ol>
             </div>
@@ -122,63 +136,79 @@ MICROCMS_API_KEY=あなたのAPIキー
           </p>
         </div>
 
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-5">
           {list.contents.length === 0 ? (
             <li className="rounded-[1.75rem] border border-violet-100 bg-white/80 p-8 text-center text-zinc-500 shadow-sm backdrop-blur">
               記事がありません。
             </li>
           ) : (
-            list.contents.map((post) => {
+            list.contents.map((post, index) => {
               const updated =
                 post.updatedAt ?? post.revisedAt ?? post.publishedAt ?? "";
               const bodyHtml = pickBlogHtml(post);
-              const summaryText = post.summary?.trim() || "—";
               const articleExcerpt = bodyHtml
                 ? excerptFromHtml(bodyHtml, 160)
                 : "—";
+              const thumbUrl = pickBlogThumbnailUrl(post);
+              const excerptMain =
+                post.summary?.trim() || articleExcerpt || "—";
 
               return (
                 <li key={post.id}>
-                  <article className="rounded-[1.75rem] border border-violet-100/80 bg-white/90 p-6 shadow-sm backdrop-blur transition hover:border-violet-200 hover:shadow-md">
-                    <dl className="space-y-3 text-sm">
-                      {updated ? (
-                        <div>
-                          <dt className="text-xs font-medium uppercase tracking-wider text-violet-600/90">
-                            更新日時
-                          </dt>
-                          <dd className="mt-1 text-zinc-800">
-                            <time dateTime={updated}>
-                              {formatBlogDate(updated)}
-                            </time>
-                          </dd>
+                  <Link
+                    href={`/blog/post/${post.id}`}
+                    className="group block rounded-[1.75rem] border border-violet-100/80 bg-white/90 shadow-sm backdrop-blur transition hover:border-violet-300 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+                  >
+                    <article className="flex flex-col overflow-hidden rounded-[inherit] sm:flex-row">
+                      <div className="relative aspect-[16/10] w-full shrink-0 self-stretch bg-gradient-to-br from-violet-100 via-white to-slate-100 sm:aspect-auto sm:min-h-[11rem] sm:w-[min(42%,13rem)] sm:min-w-[11rem] sm:max-w-[13rem]">
+                        {thumbUrl ? (
+                          <Image
+                            src={thumbUrl}
+                            alt=""
+                            fill
+                            sizes="(max-width: 640px) 100vw, 208px"
+                            className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                            priority={index === 0}
+                          />
+                        ) : (
+                          <div
+                            className="flex h-full min-h-[10rem] items-center justify-center bg-gradient-to-br from-violet-400/25 via-violet-200/40 to-slate-200/50 sm:min-h-0"
+                            aria-hidden
+                          >
+                            <span className="select-none text-5xl font-bold tracking-tighter text-violet-300/90 drop-shadow-sm">
+                              {(post.title.trim()[0] ?? "B").toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-1 flex-col justify-between gap-4 p-5 sm:p-6">
+                        <div className="space-y-3">
+                          {updated ? (
+                            <p className="text-xs font-medium uppercase tracking-wider text-violet-600/90">
+                              <time dateTime={updated}>
+                                {formatBlogDate(updated)}
+                              </time>
+                            </p>
+                          ) : null}
+                          <h2 className="text-lg font-semibold leading-snug text-zinc-900 transition group-hover:text-violet-900 sm:text-xl">
+                            {post.title}
+                          </h2>
+                          <p className="line-clamp-3 text-sm leading-6 text-zinc-600">
+                            {excerptMain}
+                          </p>
                         </div>
-                      ) : null}
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wider text-violet-600/90">
-                          タイトル
-                        </dt>
-                        <dd className="mt-1 text-lg font-semibold text-zinc-900">
-                          {post.title}
-                        </dd>
+                        <p className="text-sm font-medium text-violet-700 group-hover:text-violet-900">
+                          続きを読む
+                          <span
+                            className="ml-1 inline-block transition group-hover:translate-x-0.5"
+                            aria-hidden
+                          >
+                            →
+                          </span>
+                        </p>
                       </div>
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wider text-violet-600/90">
-                          記事
-                        </dt>
-                        <dd className="mt-1 leading-6 text-zinc-600">
-                          {articleExcerpt}
-                        </dd>
-                      </div>
-                    </dl>
-                    <div className="mt-5 border-t border-violet-100 pt-4">
-                      <Link
-                        href={`/blog/post/${post.id}`}
-                        className="inline-flex text-sm font-medium text-violet-700 underline-offset-4 hover:text-violet-900 hover:underline"
-                      >
-                        記事の詳細を見る
-                      </Link>
-                    </div>
-                  </article>
+                    </article>
+                  </Link>
                 </li>
               );
             })

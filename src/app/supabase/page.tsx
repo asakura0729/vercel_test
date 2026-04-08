@@ -61,7 +61,7 @@ export default async function ListPage(props: PageProps<"/supabase">) {
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-600">
             List
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">SUPABASEからデータを取り込むテスト</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">SUPABASE送受信テスト</h1>
         </div>
 
         <form

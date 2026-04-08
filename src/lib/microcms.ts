@@ -10,6 +10,13 @@ export type MicroCMSListResponse<T> = {
   limit: number;
 };
 
+/** microCMS の画像フィールド（イメージ API） */
+export type MicroCMSImageField = {
+  url: string;
+  height?: number;
+  width?: number;
+};
+
 /** API スキーマのカスタムフィールド（管理画面のフィールド ID に合わせて調整） */
 export type MicroCMSBlog = {
   id: string;
@@ -20,6 +27,11 @@ export type MicroCMSBlog = {
   title: string;
   /** 概要 */
   summary?: string;
+  /** 一覧・OG 用の代表画像（フィールド ID は microCMS 側に合わせてどれか一つ） */
+  eyecatch?: MicroCMSImageField | null;
+  thumbnail?: MicroCMSImageField | null;
+  image?: MicroCMSImageField | null;
+  cover?: MicroCMSImageField | null;
   /** 本文（リッチテキストが HTML 文字列のケース） */
   content?: string | MicroCMSRichTextField | null;
   /** 本文フィールド ID が `body` の場合 */
@@ -59,6 +71,22 @@ function blogEndpoint(): string {
 function headers(): HeadersInit {
   const key = process.env.MICROCMS_API_KEY!.trim();
   return { "X-MICROCMS-API-KEY": key };
+}
+
+/** 一覧・詳細ヘッダー用の代表画像 URL */
+export function pickBlogThumbnailUrl(post: MicroCMSBlog): string | null {
+  const img =
+    post.eyecatch ?? post.thumbnail ?? post.image ?? post.cover ?? null;
+  if (
+    img &&
+    typeof img === "object" &&
+    "url" in img &&
+    typeof img.url === "string" &&
+    img.url.trim()
+  ) {
+    return img.url.trim();
+  }
+  return null;
 }
 
 /** リッチ／プレーンの本文から HTML 文字列を取り出す */

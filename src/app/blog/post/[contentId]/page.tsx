@@ -3,7 +3,9 @@ import {
   getBlogDetail,
   isMicrocmsConfigured,
   pickBlogHtml,
+  pickBlogThumbnailUrl,
 } from "@/lib/microcms";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -65,6 +67,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const bodyHtml = pickBlogHtml(post);
   const updated = post.updatedAt ?? post.revisedAt ?? post.publishedAt ?? "";
+  const heroUrl = pickBlogThumbnailUrl(post);
 
   return (
     <main className={pageBg}>
@@ -87,9 +90,22 @@ export default async function BlogPostPage({ params }: PageProps) {
           ) : null}
         </header>
 
+        {heroUrl ? (
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-violet-100/80 bg-gradient-to-br from-violet-50/80 to-slate-100/60 shadow-sm">
+            <Image
+              src={heroUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 672px) 100vw, 672px"
+              priority
+            />
+          </div>
+        ) : null}
+
         {bodyHtml ? (
           <div
-            className="blog-body space-y-4 text-zinc-700 leading-8 [&_a]:font-medium [&_a]:text-violet-700 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-violet-200 [&_blockquote]:pl-4 [&_blockquote]:text-zinc-600 [&_code]:rounded [&_code]:bg-violet-50 [&_code]:px-1 [&_code]:text-sm [&_code]:text-violet-900 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900 [&_h3]:mt-8 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-zinc-900 [&_li]:ml-6 [&_li]:list-disc [&_li]:marker:text-violet-400 [&_p]:my-4 [&_strong]:text-zinc-900 [&_ul]:my-4"
+            className="blog-body space-y-4 text-zinc-700 leading-8 [&_a]:font-medium [&_a]:text-violet-700 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-violet-200 [&_blockquote]:pl-4 [&_blockquote]:text-zinc-600 [&_code]:rounded [&_code]:bg-violet-50 [&_code]:px-1 [&_code]:text-sm [&_code]:text-violet-900 [&_figure]:my-8 [&_figure]:mx-auto [&_figure]:max-w-full [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900 [&_h3]:mt-8 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-zinc-900 [&_img]:my-6 [&_img]:h-auto [&_img]:max-h-none [&_img]:max-w-full [&_img]:rounded-xl [&_li]:ml-6 [&_li]:list-disc [&_li]:marker:text-violet-400 [&_p]:my-4 [&_picture]:mx-auto [&_picture]:my-6 [&_picture]:block [&_picture]:max-w-full [&_strong]:text-zinc-900 [&_ul]:my-4"
             dangerouslySetInnerHTML={{ __html: bodyHtml }}
           />
         ) : (
