@@ -10,6 +10,7 @@
     "migrate:supabase-user-tables": "node --env-file=.env.local scripts/migrate-supabase-user-tables.mjs",
     "migrate:supabase-user-rls": "node --env-file=.env.local scripts/migrate-supabase-user-rls.mjs",
     "migrate:supabase-user-report-rls": "node --env-file=.env.local scripts/migrate-supabase-user-report-rls.mjs",
+    "migrate:supabase-sampletable": "node --env-file=.env.local scripts/migrate-supabase-sampletable.mjs",
     "check:supabase-postgres": "node --env-file=.env.local scripts/check-supabase-postgres.mjs",
     "duplicate:user-to-user-table": "node --env-file=.env.local scripts/duplicate-user-to-user-table.mjs"
   },
