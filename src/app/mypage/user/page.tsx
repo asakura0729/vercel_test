@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceRoleClient } from "@/lib/supabase/service";
 
 type UserRow = Record<string, unknown>;
+
+const USER_ID_KEY = "user-id";
 
 function formatCell(value: unknown): string {
   if (value === null || value === undefined) return "—";
@@ -18,6 +21,65 @@ function columnKeys(rows: UserRow[]): string[] {
   return Array.from(set).sort();
 }
 
+function headerLabel(key: string): string {
+  if (key === USER_ID_KEY) return "Email";
+  return key;
+}
+
+/** Auth のユーザー id → email（Service Role で listUsers。キーが無い場合は空） */
+async function fetchAuthEmailsByUserId(): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!key) return out;
+
+  try {
+    const admin = createServiceRoleClient();
+    let page = 1;
+    const perPage = 200;
+    for (;;) {
+      const { data, error } = await admin.auth.admin.listUsers({
+        page,
+        perPage,
+      });
+      if (error) break;
+      const batch = data?.users ?? [];
+      for (const u of batch) {
+        if (u.email) out.set(u.id, u.email);
+      }
+      if (batch.length < perPage) break;
+      page += 1;
+    }
+  } catch {
+    /* 列挙失敗時はフォールバックのみ */
+  }
+  return out;
+}
+
+function normalizeId(raw: unknown): string {
+  if (typeof raw === "string") return raw;
+  if (raw != null) return String(raw);
+  return "";
+}
+
+function cellDisplay(params: {
+  columnKey: string;
+  row: UserRow;
+  authEmails: Map<string, string>;
+  sessionUserId: string | undefined;
+  sessionEmail: string | undefined;
+}): string {
+  const { columnKey, row, authEmails, sessionUserId, sessionEmail } = params;
+  if (columnKey !== USER_ID_KEY) {
+    return formatCell(row[columnKey]);
+  }
+  const id = normalizeId(row[USER_ID_KEY]);
+  if (!id) return "—";
+  const fromAdmin = authEmails.get(id);
+  if (fromAdmin) return fromAdmin;
+  if (sessionUserId === id && sessionEmail) return sessionEmail;
+  return "—";
+}
+
 export default async function MyPageUserList() {
   const supabase = await createClient();
   const {
@@ -28,7 +90,10 @@ export default async function MyPageUserList() {
     redirect("/mypage/login");
   }
 
-  const { data, error } = await supabase.from("user").select("*");
+  const [authEmails, { data, error }] = await Promise.all([
+    fetchAuthEmailsByUserId(),
+    supabase.from("user").select("*"),
+  ]);
 
   const rows = (data ?? []) as UserRow[];
   const keys = columnKeys(rows);
@@ -43,8 +108,19 @@ export default async function MyPageUserList() {
             </p>
             <h1 className="text-2xl font-semibold tracking-tight">ユーザー一覧</h1>
             <p className="text-sm text-zinc-600">
-              Supabase のテーブル <code className="rounded bg-cyan-100/80 px-1.5 py-0.5 text-cyan-900">user</code>{" "}
+              Supabase のテーブル{" "}
+              <code className="rounded bg-cyan-100/80 px-1.5 py-0.5 text-cyan-900">user</code>{" "}
               の行を表示しています。
+              <span className="mt-1 block text-xs text-zinc-500">
+                <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-[0.7rem]">
+                  user-id
+                </code>{" "}
+                列は Authentication のメールとして表示します（全件表示にはサーバー側の{" "}
+                <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-[0.7rem]">
+                  SUPABASE_SERVICE_ROLE_KEY
+                </code>{" "}
+                が必要です。ない場合はログイン中のアカウント分のみ解決されます）。
+              </span>
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-sm">
@@ -82,7 +158,7 @@ export default async function MyPageUserList() {
                       key={key}
                       className="whitespace-nowrap px-4 py-3 font-semibold text-cyan-950"
                     >
-                      {key}
+                      {headerLabel(key)}
                     </th>
                   ))}
                 </tr>
@@ -95,8 +171,20 @@ export default async function MyPageUserList() {
                   >
                     {keys.map((key) => (
                       <td key={key} className="max-w-[20rem] px-4 py-2.5 align-top text-zinc-800">
-                        <span className="line-clamp-3 break-all font-mono text-xs sm:text-sm">
-                          {formatCell(row[key])}
+                        <span
+                          className={
+                            key === USER_ID_KEY
+                              ? "line-clamp-3 break-all text-xs sm:text-sm"
+                              : "line-clamp-3 break-all font-mono text-xs sm:text-sm"
+                          }
+                        >
+                          {cellDisplay({
+                            columnKey: key,
+                            row,
+                            authEmails,
+                            sessionUserId: user.id,
+                            sessionEmail: user.email ?? undefined,
+                          })}
                         </span>
                       </td>
                     ))}
