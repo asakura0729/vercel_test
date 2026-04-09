@@ -63,7 +63,7 @@ export function TestRowForm({
           maxLength={255}
           placeholder="省略可"
           defaultValue={titleDefault}
-          className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none ring-teal-200/60 placeholder:text-zinc-400 focus:border-teal-400 focus:ring-2"
+          className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none ring-emerald-200/70 placeholder:text-zinc-400 focus:border-emerald-400 focus:ring-2"
         />
       </div>
 
@@ -80,7 +80,7 @@ export function TestRowForm({
           rows={6}
           placeholder="内容（省略可）"
           defaultValue={textDefault}
-          className="w-full resize-y rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm leading-relaxed text-zinc-900 outline-none ring-teal-200/60 placeholder:text-zinc-400 focus:border-teal-400 focus:ring-2"
+          className="w-full resize-y rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm leading-relaxed text-zinc-900 outline-none ring-emerald-200/70 placeholder:text-zinc-400 focus:border-emerald-400 focus:ring-2"
         />
       </div>
 
@@ -88,7 +88,7 @@ export function TestRowForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-teal-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {pending
             ? "送信中…"

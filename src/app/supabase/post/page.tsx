@@ -4,28 +4,28 @@ import Link from "next/link";
 
 export default function SupabasePostNewPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-teal-950 to-zinc-900 px-6 py-16 text-zinc-100">
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-amber-50 via-white to-emerald-50 px-6 py-16 text-zinc-900">
       <div
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 80% 50% at 20% -10%, rgba(45,212,191,0.35), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(99,102,241,0.25), transparent 50%)",
+            "radial-gradient(ellipse 85% 55% at 10% 0%, rgba(16,185,129,0.12), transparent 52%), radial-gradient(ellipse 70% 45% at 95% 95%, rgba(251,191,36,0.14), transparent 48%)",
         }}
       />
       <div className="relative mx-auto w-full max-w-lg">
         <div className="mb-10 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-teal-300/90">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700">
             Create
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-white">
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
             test に新規追加
           </h1>
-          <p className="text-sm leading-relaxed text-zinc-400">
+          <p className="text-sm leading-relaxed text-zinc-600">
             タイトルと本文は空のままでも送信できます（DB の NOT NULL 制約に従います）。
           </p>
         </div>
 
-        <div className="rounded-[1.75rem] border border-white/10 bg-zinc-900/70 p-8 shadow-2xl shadow-teal-950/50 backdrop-blur-md">
+        <div className="rounded-[1.75rem] border border-amber-100/90 bg-white/95 p-8 shadow-md shadow-emerald-900/5 backdrop-blur-sm">
           <TestRowForm
             formAction={insertTestRow}
             mode="create"
@@ -36,7 +36,7 @@ export default function SupabasePostNewPage() {
         <div className="mt-10 text-center">
           <Link
             href="/"
-            className="text-sm font-medium text-teal-300/90 underline-offset-4 hover:text-teal-200 hover:underline"
+            className="text-sm font-medium text-emerald-800 underline-offset-4 hover:text-emerald-950 hover:underline"
           >
             トップへ
           </Link>
